@@ -52,6 +52,18 @@ h2 {
   margin-bottom: 20px;
 }
 
+.decrypt-container .form-group input, .decrypt-container .form-group textarea {
+  display: block;
+  margin: 8px auto 12px;
+  width: 80%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.decrypt-container .form-group label {
+  text-align: center;
+}
+
 label {
   display: block;
   color: #333;

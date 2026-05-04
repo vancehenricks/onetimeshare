@@ -79,8 +79,6 @@ export default function ShareResult({ data, onCreateNew }: ShareResultProps) {
           <div className="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-md">
             <p className="m-0 font-semibold text-yellow-800">⚠️ Important: Share this code separately</p>
             <p className="text-sm text-yellow-800 mt-1">This code is required to decrypt the secret. It is shown only once.</p>
-            <p className="text-sm text-gray-600 mt-2">Encryption happens in your browser; the server stores only ciphertext and cannot read the secret.</p>
-
             <div className="flex gap-3 mt-4">
               <input
                 type="text"

@@ -93,7 +93,7 @@ export default function ViewPage({ secretId }: ViewPageProps) {
         {state === 'decrypt-needed' && (
           <div className="decrypt-container">
             <div className="form-group">
-              <label htmlFor="codeInput">Enter 6-digit Code:</label>
+              <label htmlFor="codeInput" style={{ display: 'block', textAlign: 'center' }}>Enter 6-digit Code:</label>
               <input
                 id="codeInput"
                 type="text"
@@ -102,6 +102,8 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                 value={code}
                 onChange={handleCodeChange}
                 style={{
+                  display: 'block',
+                  margin: '12px auto',
                   fontSize: '24px',
                   letterSpacing: '8px',
                   textAlign: 'center',
