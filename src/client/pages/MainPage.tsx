@@ -21,6 +21,11 @@ export default function MainPage() {
       return;
     }
 
+    if (content.length > 50) {
+      alert('Secret must be 50 characters or fewer');
+      return;
+    }
+
     setLoading(true);
     try {
       // Generate code and encrypt content on client-side

@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { secretStore } from './server/secretStore.js';
@@ -20,6 +21,11 @@ app.post('/api/secrets', (req: Request, res: Response): void => {
 
     if (!encryptedContent || typeof encryptedContent !== 'string') {
       res.status(400).json({ error: 'Encrypted content is required and must be a string' });
+      return;
+    }
+
+    if (encryptedContent.length > 50) {
+      res.status(400).json({ error: 'Encrypted content must be at most 50 characters' });
       return;
     }
 
@@ -67,8 +73,10 @@ app.get('/api/secrets/:id/check', (req: Request, res: Response): void => {
   }
 });
 
-// Serve static files from Vite build
-const publicPath = path.join(__dirname, './public');
+// Serve static files from Vite build (prefer dist/public if it exists)
+const defaultPublic = path.join(__dirname, './public');
+const distPublic = path.join(__dirname, '../dist/public');
+const publicPath = fs.existsSync(distPublic) ? distPublic : defaultPublic;
 app.use(express.static(publicPath));
 
 // Catch-all route for SPA

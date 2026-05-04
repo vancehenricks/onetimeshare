@@ -63,7 +63,9 @@ export default function ViewPage({ secretId }: ViewPageProps) {
         throw new Error('No encrypted data available');
       }
       const decrypted = await decryptSecret(encryptedData, code);
-      setContent(decrypted);
+      // Enforce client-side max length to avoid showing longer secrets
+      const trimmed = decrypted.slice(0, 50);
+      setContent(trimmed);
       setState('success');
     } catch (err) {
       const errMessage = err instanceof Error ? err.message : 'Decryption failed';
@@ -98,7 +100,7 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                 id="codeInput"
                 type="text"
                 placeholder="000000"
-                maxLength={6}
+                maxLength={50}
                 value={code}
                 onChange={handleCodeChange}
                 style={{

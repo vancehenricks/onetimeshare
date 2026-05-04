@@ -20,8 +20,9 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
         id="secretInput"
         placeholder="Enter your secret here..."
         rows={6}
+        maxLength={50}
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={(e) => setContent(e.target.value.slice(0, 50))}
       />
       <button
         className="btn btn-primary"
