@@ -18,6 +18,7 @@ export default function ViewPage({ secretId }: ViewPageProps) {
   const [code, setCode] = useState('');
   const [decrypting, setDecrypting] = useState(false);
   const [encryptedData, setEncryptedData] = useState<string | null>(null);
+  const [showSecret, setShowSecret] = useState(false);
 
   useEffect(() => {
     fetchSecret(secretId)
@@ -127,7 +128,19 @@ export default function ViewPage({ secretId }: ViewPageProps) {
             <div className="secret-content">
               <h2>Secret Content:</h2>
               <div className="content-box">
-                <pre>{content}</pre>
+                <div className="secret-toolbar">
+                  <button
+                    className="eye-toggle"
+                    onClick={() => setShowSecret((s) => !s)}
+                    aria-pressed={showSecret}
+                    title={showSecret ? 'Hide secret' : 'Show secret'}
+                  >
+                    {showSecret ? '🙈' : '👁️'}
+                  </button>
+                </div>
+                <pre className={`secret-text ${showSecret ? '' : 'masked'}`}>
+                  {showSecret ? content : content.replace(/[^\n]/g, '•')}
+                </pre>
               </div>
               <p className="info-message">
                 ℹ️ This secret has been viewed and can no longer be accessed.
