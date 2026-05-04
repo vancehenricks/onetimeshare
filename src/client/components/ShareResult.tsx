@@ -64,9 +64,9 @@ export default function ShareResult({ data, onCreateNew }: ShareResultProps) {
         <h2 className="text-lg font-semibold text-gray-800">Link Generated!</h2>
         <p className="text-gray-700 mt-2">Share this link with others:</p>
         <div className="flex gap-3 mt-4">
-          <input
-            type="text"
+          <textarea
             readOnly
+            rows={3}
             className="flex-1 px-3 py-2 border rounded-md bg-white font-mono text-sm"
             value={data.shareUrl}
           />
@@ -80,9 +80,9 @@ export default function ShareResult({ data, onCreateNew }: ShareResultProps) {
             <p className="m-0 font-semibold text-yellow-800">⚠️ Important: Share this code separately</p>
             <p className="text-sm text-yellow-800 mt-1">This code is required to decrypt the secret. It is shown only once.</p>
             <div className="flex gap-3 mt-4">
-              <input
-                type="text"
+              <textarea
                 readOnly
+                rows={1}
                 className="flex-1 px-3 py-2 border rounded-md bg-white font-mono text-lg text-center tracking-widest"
                 value={data.code}
               />
