@@ -37,6 +37,7 @@ export default function MainPage() {
 
       const data = (await response.json()) as SecretResponse;
       data.code = code;
+      data.shareUrl = `${window.location.origin}/share/${data.id}`;
       setSecretData(data);
     } catch (error) {
       console.error('Error:', error);
