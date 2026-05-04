@@ -62,13 +62,16 @@ export default function MainPage() {
         ) : (
           <>
             <h1 className="text-2xl font-bold text-gray-800 mb-4">Share a Secret</h1>
-            <ol className="list-decimal list-inside space-y-2 text-gray-600 mb-6 text-sm">
-              <li>Type your secret below (max 50 characters).</li>
-              <li>It gets encrypted in your browser — the server never sees the plaintext.</li>
-              <li>You'll receive a one-time link and a 6-digit code to share.</li>
-              <li>The recipient opens the link, enters the code, and reads the secret.</li>
-              <li>The secret is deleted immediately after being viewed. Link expires in 5 minutes.</li>
-            </ol>
+            <div className="bg-green-50 border border-green-100 rounded-md p-4 mb-6 text-sm text-gray-700">
+              <h2 className="font-semibold mb-2">How it works</h2>
+              <ul className="list-disc list-inside space-y-1">
+                <li>Typed secret is encrypted in your browser — only ciphertext is sent to the server.</li>
+                <li>The server cannot decrypt or read your secret.</li>
+                <li>You get a one-time link and a 6-digit code to share; the code is required to decrypt.</li>
+                <li>The link expires in 5 minutes and the secret is deleted immediately after viewing.</li>
+                <li>Maximum 50 characters — keep it short and private.</li>
+              </ul>
+            </div>
             <ShareForm onShare={handleShare} loading={loading} />
           </>
         )}
