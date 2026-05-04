@@ -283,3 +283,45 @@ textarea:focus {
     width: 100%;
   }
 }
+
+/* Share form masking overlay */
+.textarea-wrapper {
+  position: relative;
+}
+
+.textarea-wrapper textarea {
+  position: relative;
+  z-index: 0;
+  background: white;
+}
+
+.textarea-wrapper .overlay-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px;
+  pointer-events: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #111;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.textarea-wrapper .eye-toggle {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+}
+
+textarea.masked {
+  color: transparent;
+  caret-color: #111;
+}
+
+textarea.masked::selection {
+  background: rgba(0,0,0,0.1);
+}
