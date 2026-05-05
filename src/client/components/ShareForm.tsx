@@ -21,7 +21,7 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
       <div className="instructions mb-4 text-xs md:text-sm text-gray-700">
         <strong className="text-sm md:text-base block mb-2">How to use</strong>
         <ol className="list-decimal list-inside mt-2 space-y-1 text-xs md:text-sm">
-          <li>Enter the secret (max 500 characters).</li>
+          <li>Enter the secret (max 1000 characters).</li>
           <li>Click <em>Generate Share Link</em>. A link and a short code will be produced.</li>
           <li>Send the link and the code to the recipient separately. The secret is encrypted in your browser; the server never sees the plain text.</li>
           <li>The link expires in 5 minutes and can be opened only once.</li>
@@ -43,7 +43,7 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
           id="secretInput"
           placeholder="Enter your secret here..."
           rows={5}
-          maxLength={500}
+          maxLength={1000}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className={`text-sm md:text-base ${showSecret ? '' : 'masked'}`}
