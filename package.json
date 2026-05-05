@@ -15,7 +15,7 @@
     "preview": "vite preview",
     "start": "node dist/server.js",
     "test": "npx jest",
-    "test:integration": "bash tests/integration.sh"
+    "test:e2e": "bash tests/e2e.sh"
   },
   "repository": {
     "type": "git",

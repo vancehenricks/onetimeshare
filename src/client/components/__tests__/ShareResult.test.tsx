@@ -13,7 +13,7 @@ afterEach(() => {
   jest.resetAllMocks();
 });
 
-test('displays link and copies link and code', async () => {
+it('displays link and copies link and code', async () => {
   const now = Date.now();
   const data = {
     id: '1',

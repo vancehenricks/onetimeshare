@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ShareForm from '../ShareForm';
 
-test('renders and toggles show/hide and submits', () => {
+it('renders and toggles show/hide and submits', () => {
   const onShare = jest.fn();
   render(<ShareForm onShare={onShare} loading={false} />);
 

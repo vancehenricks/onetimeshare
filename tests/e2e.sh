@@ -1,13 +1,22 @@
 #!/bin/bash
 
-# Integration Tests for OneTimeShare API
+# End-to-end (system) Tests for OneTimeShare API
 # Tests all endpoints using curl
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+# Color handling (respect NO_COLOR)
+if [ -n "$NO_COLOR" ]; then
+  RED=''
+  GREEN=''
+  YELLOW=''
+  BLUE=''
+  NC=''
+else
+  RED='\033[0;31m'
+  GREEN='\033[0;32m'
+  YELLOW='\033[1;33m'
+  BLUE='\033[0;34m'
+  NC='\033[0m'
+fi
 
 TESTS_RUN=0
 TESTS_PASSED=0
@@ -15,14 +24,14 @@ TESTS_FAILED=0
 
 API_URL="${API_URL:-http://localhost:3000}"
 
-log_pass() { echo -e "${GREEN}✓${NC} $1"; ((TESTS_PASSED++)); ((TESTS_RUN++)); }
-log_fail() { echo -e "${RED}✗${NC} $1"; ((TESTS_FAILED++)); ((TESTS_RUN++)); }
-log_test() { echo -e "${BLUE}→${NC} $1"; }
-log_section() { echo ""; echo -e "${YELLOW}## $1${NC}"; }
+log_pass() { printf "%b\n" "${GREEN}✓${NC} $1"; ((TESTS_PASSED++)); ((TESTS_RUN++)); }
+log_fail() { printf "%b\n" "${RED}✗${NC} $1"; ((TESTS_FAILED++)); ((TESTS_RUN++)); }
+log_test() { printf "%b\n" "${BLUE}→${NC} $1"; }
+log_section() { printf "\n%b\n" "${YELLOW}## $1${NC}"; }
 
-echo -e "${BLUE}╔════════════════════════════════════════╗"
-echo "║  OneTimeShare API Integration Tests   ║"
-echo "╚════════════════════════════════════════╝${NC}\n"
+printf "%b\n" "${BLUE}╔════════════════════════════════════════╗"
+printf "%b\n" "║  OneTimeShare API End-to-End Tests     ║"
+printf "%b\n" "╚════════════════════════════════════════╝${NC}\n"
 
 # Test 1: Server connectivity
 log_section "Server Connectivity"
@@ -195,15 +204,15 @@ fi
 # Summary
 log_section "Test Summary"
 echo "Total tests: $TESTS_RUN"
-echo -e "${GREEN}Passed: $TESTS_PASSED${NC}"
+printf "%b\n" "${GREEN}Passed: $TESTS_PASSED${NC}"
 if [ $TESTS_FAILED -gt 0 ]; then
-  echo -e "${RED}Failed: $TESTS_FAILED${NC}"
+  printf "%b\n" "${RED}Failed: $TESTS_FAILED${NC}"
   echo ""
-  echo -e "${RED}✗ Some tests failed${NC}"
+  printf "%b\n" "${RED}✗ Some tests failed${NC}"
   exit 1
 else
-  echo -e "${GREEN}Failed: $TESTS_FAILED${NC}"
+  printf "%b\n" "${GREEN}Failed: $TESTS_FAILED${NC}"
   echo ""
-  echo -e "${GREEN}✓ All tests passed!${NC}"
+  printf "%b\n" "${GREEN}✓ All tests passed!${NC}"
   exit 0
 fi
