@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import ShareForm from '../components/ShareForm';
+import type { ShareInput } from '../components/ShareForm';
 import ShareResult from '../components/ShareResult';
 import Footer from '../components/Footer';
-import { generateCode, encryptSecret } from '../utils/encryption';
+import { generateCode, encryptSecret, encryptFile } from '../utils/encryption';
 
 interface SecretResponse {
   id: string;
@@ -16,17 +17,19 @@ export default function MainPage() {
   const [secretData, setSecretData] = useState<SecretResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleShare = async (content: string) => {
-    if (!content.trim()) {
+  const handleShare = async (input: ShareInput) => {
+    if (input.kind === 'text' && !input.content.trim()) {
       alert('Please enter a secret');
       return;
     }
 
     setLoading(true);
     try {
-      // Generate code and encrypt content on client-side
       const code = generateCode();
-      const encryptedContent = await encryptSecret(content, code);
+      const encryptedContent =
+        input.kind === 'text'
+          ? await encryptSecret(input.content, code)
+          : await encryptFile(input.file, code);
 
       const response = await fetch('/api/secrets', {
         method: 'POST',

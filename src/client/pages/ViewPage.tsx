@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { decryptSecret } from '../utils/encryption';
+import { decryptSecret, isFilePayload, parseFilePayload } from '../utils/encryption';
+import type { FilePayload } from '../utils/encryption';
 import Footer from '../components/Footer';
 
 interface SecretContentResponse {
@@ -15,6 +16,7 @@ type LoadingState = 'loading' | 'decrypt-needed' | 'success' | 'error';
 export default function ViewPage({ secretId }: ViewPageProps) {
   const [state, setState] = useState<LoadingState>('loading');
   const [content, setContent] = useState('');
+  const [filePayload, setFilePayload] = useState<FilePayload | null>(null);
   const [error, setError] = useState('');
   const [code, setCode] = useState('');
   const [decrypting, setDecrypting] = useState(false);
@@ -66,7 +68,11 @@ export default function ViewPage({ secretId }: ViewPageProps) {
         throw new Error('No encrypted data available');
       }
       const decrypted = await decryptSecret(encryptedData, code);
-      setContent(decrypted);
+      if (isFilePayload(decrypted)) {
+        setFilePayload(parseFilePayload(decrypted));
+      } else {
+        setContent(decrypted);
+      }
       setState('success');
     } catch (err) {
       const errMessage = err instanceof Error ? err.message : 'Decryption failed';
@@ -86,6 +92,22 @@ export default function ViewPage({ secretId }: ViewPageProps) {
     } catch (err) {
       alert('Failed to copy secret');
     }
+  };
+
+  const handleDownload = () => {
+    if (!filePayload) return;
+    const byteChars = atob(filePayload.data);
+    const byteArray = new Uint8Array(byteChars.length);
+    for (let i = 0; i < byteChars.length; i++) {
+      byteArray[i] = byteChars.charCodeAt(i);
+    }
+    const blob = new Blob([byteArray], { type: filePayload.mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filePayload.name;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,47 +153,65 @@ export default function ViewPage({ secretId }: ViewPageProps) {
         {state === 'success' && (
           <div className="secret-container">
             <div className="secret-content">
-              <div className="secret-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+              {filePayload ? (
+                <>
+                  <div className="content-box" style={{ padding: '1rem' }}>
+                    <p className="text-sm md:text-base font-medium text-gray-800 mb-1">📎 {filePayload.name}</p>
+                    <p className="text-xs text-gray-500">{filePayload.mimeType}</p>
+                  </div>
                   <button
-                    className="eye-toggle copy-btn"
-                    onClick={() => setShowSecret((s) => !s)}
-                    aria-pressed={showSecret}
-                    title={showSecret ? 'Hide secret' : 'Show secret'}
-                    type="button"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {showSecret ? 'Hide' : 'Show'}
-                  </button>
-
-                  <button
-                    className="eye-toggle copy-btn"
-                    onClick={handleCopy}
-                    title="Copy secret"
+                    className="btn btn-primary text-sm md:text-base mt-3"
+                    onClick={handleDownload}
                     type="button"
                   >
-                    {copied ? 'Copied' : 'Copy'}
+                    Download File
                   </button>
-                </div>
-              </div>
+                </>
+              ) : (
+                <>
+                  <div className="secret-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button
+                        className="eye-toggle copy-btn"
+                        onClick={() => setShowSecret((s) => !s)}
+                        aria-pressed={showSecret}
+                        title={showSecret ? 'Hide secret' : 'Show secret'}
+                        type="button"
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {showSecret ? 'Hide' : 'Show'}
+                      </button>
 
-              <div className="content-box">
-                <pre
-                  className={`secret-text text-xs md:text-sm ${showSecret ? '' : 'masked'}`}
-                  style={{
-                    whiteSpace: 'pre',
-                    textAlign: 'left',
-                    userSelect: 'text',
-                    overflowX: 'auto',
-                    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace',
-                    padding: 0,
-                    background: 'transparent',
-                    borderRadius: '6px'
-                  }}
-                >
-                  {showSecret ? content : content.replace(/[^\n]/g, '•')}
-                </pre>
-              </div>
+                      <button
+                        className="eye-toggle copy-btn"
+                        onClick={handleCopy}
+                        title="Copy secret"
+                        type="button"
+                      >
+                        {copied ? 'Copied' : 'Copy'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="content-box">
+                    <pre
+                      className={`secret-text text-xs md:text-sm ${showSecret ? '' : 'masked'}`}
+                      style={{
+                        whiteSpace: 'pre',
+                        textAlign: 'left',
+                        userSelect: 'text',
+                        overflowX: 'auto',
+                        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace',
+                        padding: 0,
+                        background: 'transparent',
+                        borderRadius: '6px'
+                      }}
+                    >
+                      {showSecret ? content : content.replace(/[^\n]/g, '•')}
+                    </pre>
+                  </div>
+                </>
+              )}
               <p className="info-message text-xs md:text-sm">
                 ℹ️ This secret has been viewed and can no longer be accessed.
               </p>

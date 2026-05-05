@@ -20,6 +20,6 @@ it('renders and toggles show/hide and submits', () => {
   const genBtn = screen.getByRole('button', { name: /generate share link/i });
   fireEvent.click(genBtn);
 
-  expect(onShare).toHaveBeenCalledWith('my secret');
+  expect(onShare).toHaveBeenCalledWith({ kind: 'text', content: 'my secret' });
   expect(textarea).toHaveValue('');
 });
