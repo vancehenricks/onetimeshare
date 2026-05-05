@@ -177,7 +177,7 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                     borderRadius: '6px'
                   }}
                 >
-                  {showSecret ? content : content.replace(/[^\n]/g, '•')}
+                  {showSecret ? content : content.replace(/[^\s]/g, '•')}
                 </pre>
               </div>
               <p className="info-message text-xs md:text-sm">
