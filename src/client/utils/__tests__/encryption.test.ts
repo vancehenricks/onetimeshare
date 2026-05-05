@@ -1,9 +1,4 @@
-/**
- * Unit tests for encryption utilities
- * Tests client-side encryption and decryption functions
- */
-
-import { generateCode, encryptSecret, decryptSecret } from './encryption';
+import { generateCode, encryptSecret, decryptSecret } from '../encryption';
 
 describe('Encryption Utils', () => {
   describe('generateCode', () => {

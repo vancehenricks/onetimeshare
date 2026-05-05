@@ -1,9 +1,4 @@
-/**
- * Unit tests for SecretStore
- * Tests server-side secret storage and retrieval
- */
-
-import { secretStore } from './secretStore';
+import { secretStore } from '../secretStore';
 
 describe('SecretStore', () => {
   describe('generateId', () => {
