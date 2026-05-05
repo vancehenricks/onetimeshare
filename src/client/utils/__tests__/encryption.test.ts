@@ -203,5 +203,92 @@ describe('Encryption Utils', () => {
       const decoded = atob(payload.data);
       expect(decoded).toBe('');
     });
+
+    it('handles large file (near 1MB limit)', async () => {
+      const code = generateCode();
+      const largeBuffer = new Uint8Array(900 * 1024); // 900KB
+      largeBuffer.fill(0xAB);
+      const file = new File([largeBuffer], 'large.bin', { type: 'application/octet-stream' });
+
+      const encrypted = await encryptFile(file, code);
+      const decryptedJson = await decryptSecret(encrypted, code);
+      expect(isFilePayload(decryptedJson)).toBe(true);
+
+      const payload = parseFilePayload(decryptedJson);
+      const bytes = Uint8Array.from(atob(payload.data), (c) => c.charCodeAt(0));
+      expect(bytes.length).toBe(900 * 1024);
+      expect(bytes[0]).toBe(0xAB);
+    });
+
+    it('preserves special characters in file name', async () => {
+      const code = generateCode();
+      const file = new File(['data'], 'my file (1) [final].txt', { type: 'text/plain' });
+      const encrypted = await encryptFile(file, code);
+
+      const decryptedJson = await decryptSecret(encrypted, code);
+      const payload = parseFilePayload(decryptedJson);
+      expect(payload.name).toBe('my file (1) [final].txt');
+    });
+
+    it('uses application/octet-stream when file type is empty', async () => {
+      const code = generateCode();
+      const file = new File(['data'], 'noextension', { type: '' });
+      const encrypted = await encryptFile(file, code);
+
+      const decryptedJson = await decryptSecret(encrypted, code);
+      const payload = parseFilePayload(decryptedJson);
+      expect(payload.mimeType).toBe('application/octet-stream');
+    });
+  });
+
+  describe('isFilePayload', () => {
+    it('returns true for valid file payload JSON', () => {
+      const json = JSON.stringify({ type: 'file', name: 'f.txt', mimeType: 'text/plain', data: '' });
+      expect(isFilePayload(json)).toBe(true);
+    });
+
+    it('returns false for plain text (not JSON)', () => {
+      expect(isFilePayload('hello world')).toBe(false);
+    });
+
+    it('returns false for invalid JSON', () => {
+      expect(isFilePayload('{invalid json')).toBe(false);
+    });
+
+    it('returns false for JSON object without type field', () => {
+      expect(isFilePayload(JSON.stringify({ name: 'f.txt' }))).toBe(false);
+    });
+
+    it('returns false for JSON object with wrong type value', () => {
+      expect(isFilePayload(JSON.stringify({ type: 'text', name: 'f.txt' }))).toBe(false);
+    });
+
+    it('returns false for JSON array', () => {
+      expect(isFilePayload(JSON.stringify([1, 2, 3]))).toBe(false);
+    });
+
+    it('returns false for empty string', () => {
+      expect(isFilePayload('')).toBe(false);
+    });
+  });
+
+  describe('parseFilePayload', () => {
+    it('parses valid file payload', () => {
+      const payload = { type: 'file', name: 'test.txt', mimeType: 'text/plain', data: btoa('hello') };
+      const result = parseFilePayload(JSON.stringify(payload));
+      expect(result.name).toBe('test.txt');
+      expect(result.mimeType).toBe('text/plain');
+      expect(result.data).toBe(btoa('hello'));
+    });
+
+    it('throws on invalid JSON', () => {
+      expect(() => parseFilePayload('{invalid')).toThrow();
+    });
+
+    it('returns object even if fields are missing (type cast)', () => {
+      const result = parseFilePayload(JSON.stringify({ type: 'file' }));
+      expect(result).toBeDefined();
+      expect(result.name).toBeUndefined();
+    });
   });
 });
